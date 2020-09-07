@@ -1,4 +1,4 @@
-package dev.mina.movies
+package dev.mina.movies.list.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -8,7 +8,7 @@ import dev.mina.movies.data.Movie
 import dev.mina.movies.repo.MoviesRepository
 import dev.mina.movies.room.MoviesDatabase
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MoviesListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val moviesRepository: MoviesRepository
 
