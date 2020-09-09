@@ -25,7 +25,7 @@ class MoviesAdapter(
         holder.bind(MovieItemViewState(movieItemClickListener, item))
     }
 
-    override fun getItemCount() = values.size
+    override fun getItemCount(): Int = values.size
 
     fun updateList(movies: List<Movie>) {
         values.clear()
@@ -39,5 +39,6 @@ class MoviesAdapter(
             binding.viewState = viewState
             binding.executePendingBindings()
         }
+
     }
 }

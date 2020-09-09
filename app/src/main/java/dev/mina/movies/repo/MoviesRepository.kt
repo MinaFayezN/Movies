@@ -18,5 +18,9 @@ class MoviesRepository(private val moviesDAO: MoviesDAO) {
         moviesDAO.addAllMovies(movies)
     }
 
+    fun searchMovies(query: String): LiveData<List<Movie>> {
+        return moviesDAO.searchMovies(query)
+    }
+
 
 }

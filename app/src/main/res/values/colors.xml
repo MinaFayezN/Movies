@@ -3,4 +3,7 @@
     <color name="colorPrimary">#30366C</color>
     <color name="colorPrimaryDark">#1E2452</color>
     <color name="colorAccent">#F94B16</color>
+    <color name="bg_color">#f9f9f9</color>
+    <color name="title_color">#202020</color>
+    <color name="hint_color">#48333333</color>
 </resources>

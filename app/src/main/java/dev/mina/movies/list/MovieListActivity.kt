@@ -1,9 +1,14 @@
 package dev.mina.movies.list
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import dev.mina.movies.R
 import dev.mina.movies.data.Movie
@@ -15,7 +20,8 @@ import dev.mina.movies.list.viewmodels.MoviesListViewModel
 import dev.mina.movies.list.viewstates.MoviesListViewState
 
 
-class MovieListActivity : AppCompatActivity(), MovieItemClickListener {
+class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
+    SearchView.OnQueryTextListener {
 
     private val moviesListViewState: MoviesListViewState by lazy {
         MoviesListViewState(this)
@@ -58,6 +64,17 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.list_menu, menu)
+
+        val searchItem: MenuItem? = menu?.findItem(R.id.action_search)
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView: SearchView? = searchItem?.actionView as SearchView
+
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searchView?.setOnQueryTextListener(this)
+        return super.onCreateOptionsMenu(menu)
+    }
 
     override fun onMovieItemClicked(movie: Movie) {
         if (twoPane) {
@@ -77,5 +94,14 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener {
             startActivity(intent)
         }
     }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return true
+    }
+
 
 }

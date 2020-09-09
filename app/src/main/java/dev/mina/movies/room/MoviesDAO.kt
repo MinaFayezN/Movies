@@ -20,8 +20,11 @@ interface MoviesDAO {
     @Delete
     fun deleteMovie(movie: Movie)
 
-    @Query("SELECT * FROM movies WHERE title = :title")
-    fun retrieveMovie(title: String): LiveData<Movie>
+    @Query("SELECT * FROM movies WHERE title = :query")
+    fun retrieveMovie(query: String): LiveData<Movie>
+
+    @Query("SELECT * FROM movies WHERE title = :query OR genres LIKE '%' || :query || '%' OR `cast` LIKE '%' || :query || '%' ")
+    fun searchMovies(query: String): LiveData<List<Movie>>
 
     @Query("SELECT * FROM movies")
     fun retrieveAllMovies(): LiveData<List<Movie>>
