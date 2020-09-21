@@ -17,6 +17,8 @@ const val TAG = "FlickrSearch"
 
 class SearchViewModel : BaseViewModel() {
 
+    private val disposables = CompositeDisposable()
+
     @Inject
     lateinit var searchAPI: SearchAPI
 
@@ -25,18 +27,7 @@ class SearchViewModel : BaseViewModel() {
     val errorMessage = MutableLiveData("")
     val loadingVisibility = MutableLiveData(GONE)
 
-    val apiResponse = BehaviorSubject.create<ImagesResponse>().apply {
-        doOnNext {
-            loadingVisibility.postValue(GONE)
-            errorMessage.postValue(if (it.photos.photo.isEmpty()) "No Photos Found" else "")
-        }
-        doOnError {
-            loadingVisibility.postValue(GONE)
-            errorMessage.postValue(it.message ?: it.toString())
-        }
-    }
-    private val disposables = CompositeDisposable()
-
+    val apiResponse = BehaviorSubject.create<ImagesResponse>()
 
     init {
         searchText
@@ -58,9 +49,11 @@ class SearchViewModel : BaseViewModel() {
                             errorMessage.postValue("")
                         }
                         .subscribe({ response ->
+                            errorMessage.postValue(if (response.photos.photo.isEmpty()) "No Photos Found" else "")
                             apiResponse.onNext(response)
                         }, { throwable ->
                             Log.e(TAG, "Error while calling SearchAPI: $throwable")
+                            errorMessage.postValue(throwable.message ?: throwable.toString())
                         })
 
                 },

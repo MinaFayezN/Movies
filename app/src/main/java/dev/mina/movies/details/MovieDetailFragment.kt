@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import dev.mina.movies.data.Movie
 import dev.mina.movies.databinding.MovieDetailBinding
 import dev.mina.movies.details.adapters.PhotoListAdapter
@@ -20,10 +20,9 @@ import io.reactivex.disposables.CompositeDisposable
 class MovieDetailFragment : Fragment() {
 
 
+    private val viewModel: SearchViewModel by viewModels()
+
     private var item: Movie? = null
-
-
-    private lateinit var viewModel: SearchViewModel
     private lateinit var binding: MovieDetailBinding
     private val photoListAdapter = PhotoListAdapter()
     private val disposables = CompositeDisposable()
@@ -35,7 +34,6 @@ class MovieDetailFragment : Fragment() {
                 item = it.getParcelable(ARG_ITEM)
             }
         }
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         item?.let {
             viewModel.searchText.onNext(it.title)
         }
@@ -51,7 +49,9 @@ class MovieDetailFragment : Fragment() {
             this.viewModel = this@MovieDetailFragment.viewModel
             adapter = photoListAdapter
             item?.let {
-                movieItemViewState = MovieItemViewState(movie = it)
+                movieItemViewState = MovieItemViewState(movie = it).apply {
+                    castVisibility = View.VISIBLE
+                }
             }
         }
         subscribeToPhotoListSubject()
@@ -75,7 +75,7 @@ class MovieDetailFragment : Fragment() {
 
     private fun observeOnTitle() {
         viewModel.title.observe(viewLifecycleOwner, {
-            activity?.title=it
+            activity?.title = it
         })
     }
 

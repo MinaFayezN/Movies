@@ -1,6 +1,7 @@
 package dev.mina.movies.room
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.*
 import dev.mina.movies.data.Movie
 
@@ -23,10 +24,13 @@ interface MoviesDAO {
     @Query("SELECT * FROM movies WHERE title = :query")
     fun retrieveMovie(query: String): LiveData<Movie>
 
-    @Query("SELECT * FROM movies WHERE title = :query OR genres LIKE '%' || :query || '%' OR `cast` LIKE '%' || :query || '%' ")
-    fun searchMovies(query: String): LiveData<List<Movie>>
+    @Query("SELECT * FROM movies WHERE title LIKE '%' || :query || '%'  ORDER BY year")
+    fun searchMovies(query: String): DataSource.Factory<Int, Movie>
 
     @Query("SELECT * FROM movies")
     fun retrieveAllMovies(): LiveData<List<Movie>>
+
+    @Query("SELECT * FROM movies  ORDER BY year")
+    fun retrieveAllMoviesGrouped(): DataSource.Factory<Int, Movie>
 
 }

@@ -15,6 +15,7 @@ import dev.mina.movies.data.Movie
 import dev.mina.movies.databinding.ActivityMovieListBinding
 import dev.mina.movies.details.MovieDetailActivity
 import dev.mina.movies.details.MovieDetailFragment
+import dev.mina.movies.list.adapters.MoviesAdapter
 import dev.mina.movies.list.listeners.MovieItemClickListener
 import dev.mina.movies.list.viewmodels.MoviesListViewModel
 import dev.mina.movies.list.viewstates.MoviesListViewState
@@ -23,13 +24,12 @@ import dev.mina.movies.list.viewstates.MoviesListViewState
 class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
     SearchView.OnQueryTextListener {
 
-    private val moviesListViewState: MoviesListViewState by lazy {
-        MoviesListViewState(this)
-    }
-    private val viewModel: MoviesListViewModel by viewModels()
+    private val moviesListViewState = MoviesListViewState()
 
+    private val viewModel: MoviesListViewModel by viewModels()
     private var twoPane: Boolean = false
     private lateinit var binding: ActivityMovieListBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +41,7 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
     }
 
     private fun observeOnMovieList() {
-        viewModel.getAllMovies().observe(this, {
-            moviesListViewState.updateList(it)
-        })
+        viewModel.allMoviesList?.observe(this, moviesListViewState.adapter::submitList)
     }
 
     private fun initDataBinding() {
@@ -52,7 +50,9 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
             R.layout.activity_movie_list
         ).apply {
             lifecycleOwner = this@MovieListActivity
-            viewState = moviesListViewState
+            viewState = moviesListViewState.apply {
+                adapter = MoviesAdapter(this@MovieListActivity)
+            }
         }
 
     }
@@ -73,6 +73,7 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
 
         searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView?.setOnQueryTextListener(this)
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -95,12 +96,14 @@ class MovieListActivity : AppCompatActivity(), MovieItemClickListener,
         }
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return true
+    override fun onQueryTextSubmit(query: String): Boolean {
+        viewModel.filterTextAll.postValue(query)
+        return false
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
-        return true
+    override fun onQueryTextChange(newText: String): Boolean {
+        if (newText.isEmpty()) viewModel.filterTextAll.postValue(newText)
+        return false
     }
 
 

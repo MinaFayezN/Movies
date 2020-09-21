@@ -15,10 +15,4 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
-    <style name="TextAppearance.MyApp.Title.Expanded" parent="@style/TextAppearance.Design.CollapsingToolbar.Expanded">
-        <item name="autoSizeTextType">uniform</item>
-    </style>
-
-
 </resources>
